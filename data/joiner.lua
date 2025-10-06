@@ -1,6 +1,32 @@
 (function()
     repeat wait() until game:IsLoaded()
+
     local WebSocketURL = "ws://127.0.0.1:51948" -- поменяй порт если ты его поменял в питоне
+
+
+    local Players = game:GetService("Players")
+
+	-- anti-kick / thanks to fractal hub for bypass
+	hookfunction(isfunctionhooked, function(func) if func == tick then return false end end)
+    local origTick = getfenv()["tick"]
+    getfenv()["tick"] = function() return math.huge end
+    hookfunction(tick, function() return math.huge end)
+
+    -- lagger bypass (thanks to fractal hub)
+    for _, player in pairs(Players:GetPlayers()) do
+        player.CharacterAdded:Connect(function()
+            player:ClearCharacterAppearance()
+        end)
+
+        if player.Character then player:ClearCharacterAppearance() end
+    end
+    Players.PlayerAdded:Connect(function(player)
+        if player.Character then player:ClearCharacterAppearance() end
+        player.CharacterAdded:Connect(function()
+            player:ClearCharacterAppearance()
+        end)
+    end)
+
 
     local function prints(str)
         print("[AutoJoiner]: " .. str)
@@ -8,59 +34,58 @@
 
 
     local function findTargetGui()
-        for _, gui in ipairs(game:GetService('CoreGui'):GetDescendants()) do
-            if gui:IsA('ScreenGui') and gui.Name == 'Orion' then
-                return gui
-            end
-        end
-        return nil
-    end
+		local coreGui = game:GetService("CoreGui")
+
+		for _, gui in ipairs(coreGui:GetChildren()) do
+			if gui:IsA("ScreenGui") then
+				local mainFrame = gui:FindFirstChild("MainFrame")
+				if mainFrame and mainFrame:FindFirstChild("ContentContainer") then
+					local contentContainer = mainFrame.ContentContainer
+					local tabServer = contentContainer:FindFirstChild("TabContent_Server")
+					if tabServer then
+						return tabServer
+					end
+				end
+			end
+		end
+		return nil
+	end
 
     local function setJobIDText(targetGui, text)
-        for _, descendant in ipairs(targetGui:GetDescendants()) do
-            if descendant:IsA('TextLabel') and descendant.Text == 'Job-ID Input' then
-                local parentFrame = descendant.Parent
-                if not parentFrame:IsA('Frame') then continue end
+		if not targetGui then return end
 
-                for _, frameChild in ipairs(parentFrame:GetChildren()) do
-                    if frameChild:IsA('Frame') then
-                        local textBox = frameChild:FindFirstChildOfClass('TextBox')
-                        if textBox then
-                            textBox.Text = text
-                            textBox:CaptureFocus()
-                            textBox:ReleaseFocus()
-                            prints('Textbox updated: ' .. text .. ' (10m+ bypass)')
-                            return textBox
-                        end
-                    end
-                end
-            end
-        end
-        return nil
-    end
+		local inputFrame = targetGui:FindFirstChild("Input")
+		local textBox = inputFrame:FindFirstChildOfClass("TextBox")
+
+        textBox.Text = text
+        firesignal(textBox.FocusLost)
+
+        prints('Textbox updated: ' .. text .. ' (10m+ bypass)')
+		return origTick()
+	end
 
     local function clickJoinButton(targetGui)
-        for _, descendant in ipairs(targetGui:GetDescendants()) do
-            if descendant:IsA('TextLabel') and descendant.Text == 'Join Job-ID' then
-                local parentFrame = descendant.Parent
-                return parentFrame:FindFirstChildOfClass('TextButton')
-            end
-        end
-        return nil
-    end
+		for _, buttonFrame in ipairs(targetGui:GetChildren()) do
+			if buttonFrame:IsA("Frame") and buttonFrame.Name == "Button" then
+				local textLabel = buttonFrame:FindFirstChildOfClass("TextLabel")
+				local imageButton = buttonFrame:FindFirstChildOfClass("ImageButton")
+
+				if textLabel and imageButton and textLabel.Text == "Join Job-ID" then
+                    return imageButton
+				end
+			end
+		end
+		return nil
+	end
 
     local function bypass10M(jobId)
-        local targetGui = findTargetGui()
-        setJobIDText(targetGui, jobId)
-        local button = clickJoinButton(targetGui)
-
-        local upConnections = getconnections(button.MouseButton1Up)
         task.defer(function()
-            task.wait(0.005)
-            for _, conn in ipairs(upConnections) do
-                conn:Fire()
-            end
-            prints('Join server clicked (10m+ bypass)')
+            local targetGui = findTargetGui()
+            local start = setJobIDText(targetGui, jobId)
+            local button = clickJoinButton(targetGui)
+
+            getconnections(button.MouseButton1Click)[1]:Fire()
+            prints(string.format("Join server clicked (10m+ bypass) | maybe real delay: %.5fs", origTick() - start))
         end)
     end
 

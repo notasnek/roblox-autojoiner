@@ -19,8 +19,8 @@ async def identify(ws):
         "d": {
             "token": DISCORD_TOKEN,
             "properties": {
-                "os": "Windows", "browser": "Chrome", "device": "", "system_locale": "ru-RU",
-                "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+                "os": "Windows", "browser": "Chrome", "device": "", "system_locale": "en-US",
+                "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
                 "referrer": "https://discord.com/", "referring_domain": "discord.com"
             }
         }

@@ -17,6 +17,8 @@ def parse_money(value: str) -> float:
         return round(float(value[:-1]) / 1000, 3)
     elif value.endswith("M"):
         return round(float(value[:-1]), 3)
+    elif value.endswith("B"):
+        return round(float(value[:-1]) * 1000, 3)
     else:
         return 0.0
 

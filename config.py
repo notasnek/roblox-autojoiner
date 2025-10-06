@@ -8,7 +8,7 @@ DISCORD_TOKEN = "your discord token"
 # гайд/guide: https://www.youtube.com/results?search_query=how+to+get+discord+token
 
 
-MONEY_THRESHOLD = (1.0, 999.0) # in millions from, to / в миллионах от, до (example: 1.5 = 1.5m, 0.5 = 500k)
+MONEY_THRESHOLD = (1.0, 1999.0) # in millions from, to / в миллионах от, до (example: 1.5 = 1.5m, 0.5 = 500k)
 # if the brainrot earnings per second are less than the first number or higher than the second number, it will be skipped
 # если заработок в секунду у брейнрота меньше первого числа или выше второго числа, то он будет скипнут
 # Example / Пример: (3.0, 10.0) - от 3м до 10м / from 3m to 10m
