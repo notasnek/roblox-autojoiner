@@ -15,14 +15,14 @@ if __name__ == "__main__":
     print("Github: https://github.com/notasnek/roblox-autojoiner")
     print("Join our discord: https://discord.gg/fQSP3VFks9")
 
-    #print()
-    #print("Hey! Wait! You can help me for free...")
-    #print("Just click on this link to view the ad at least twice a day (to receive or renew your key)")
-    #print("https://ads.luarmor.net/get_key?for=Key_for_AutoJoiner-XqMcbHPoLXoL")
+    print()
+    print("Hey! Wait! You can help me for free...")
+    print("Just click on this link to view the ad at least once a day (please)")
+    print("https://work.ink/23bQ/notasnek")
     print("You can also donate to me on Discord. Thank you!")
     print()
 
-    print("Version: 1.1.2")
+    print("Version: 1.1.3")
     print("Starting in 2 seconds...")
     print()
 

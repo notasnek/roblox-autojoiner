@@ -5,6 +5,7 @@
 
 
     local Players = game:GetService("Players")
+	local CoreGui = game:GetService("CoreGui")
 
 	-- anti-kick / thanks to fractal hub for bypass
 	hookfunction(isfunctionhooked, function(func) if func == tick then return false end end)
@@ -33,49 +34,90 @@
     end
 
 
-    local function findTargetGui()
-		local coreGui = game:GetService("CoreGui")
+    --[[local function hasJoinButton(contentHolder) -- дерьмучий говнокод сорри мне лень умное что-то писать
+        for _, child in ipairs(contentHolder:GetChildren()) do
+            if child:IsA("Frame") then
+                local btn = child:FindFirstChildOfClass("TextButton")
+                if btn and btn.Text == "Join Job-ID" then
+                    return true
+                end
+            end
+        end
+        return false
+    end]]
 
-		for _, gui in ipairs(coreGui:GetChildren()) do
-			if gui:IsA("ScreenGui") then
-				local mainFrame = gui:FindFirstChild("MainFrame")
-				if mainFrame and mainFrame:FindFirstChild("ContentContainer") then
-					local contentContainer = mainFrame.ContentContainer
-					local tabServer = contentContainer:FindFirstChild("TabContent_Server")
-					if tabServer then
-						return tabServer
-					end
-				end
-			end
-		end
-		return nil
-	end
+    local function findTargetGui()
+        return CoreGui.ChilliLibUI.MainBase.Frame:GetChildren()[3]:GetChildren()[6].Frame.ContentHolder
+        -- ^ просто заебало все решил вот так вернуть весь путь :D
+        --[[local mainBase = CoreGui:FindFirstChild("ChilliLibUI") 
+                         and CoreGui.ChilliLibUI:FindFirstChild("MainBase")
+        
+        local baseFrame = mainBase:FindFirstChild("Frame")
+        local scrollsContainer = nil
+        for _, child in ipairs(baseFrame:GetChildren()) do
+            if child:IsA("Frame") and child:FindFirstChildOfClass("ScrollingFrame") then
+                scrollsContainer = child
+                break
+            end
+        end
+
+        for _, scrollFrame in ipairs(scrollsContainer:GetChildren()) do
+            if scrollFrame:IsA("ScrollingFrame") then
+                local innerFrame = scrollFrame:FindFirstChildOfClass("Frame")
+                if innerFrame then
+                    local contentHolder = innerFrame:FindFirstChild("ContentHolder")
+                    if contentHolder and hasJoinButton(contentHolder) then
+                        return contentHolder
+                    end
+                end
+            end
+        end
+
+        return nil]]
+    end
 
     local function setJobIDText(targetGui, text)
 		if not targetGui then return end
 
-		local inputFrame = targetGui:FindFirstChild("Input")
-		local textBox = inputFrame:FindFirstChildOfClass("TextBox")
+        textBox = targetGui:GetChildren()[5].Frame.TextBox -- опять же все задолбало
 
         textBox.Text = text
         firesignal(textBox.FocusLost)
 
         prints('Textbox updated: ' .. text .. ' (10m+ bypass)')
-		return origTick()
+        return origTick()
+
+        --[[for _, frame in ipairs(targetGui:GetChildren()) do
+            if frame:IsA("Frame") then
+                local label = frame:FindFirstChildOfClass("TextLabel")
+                if label and label.Text == "Job-ID Input" then
+                    local innerFrame = frame:FindFirstChildOfClass("Frame")
+                    local textBox = innerFrame and innerFrame:FindFirstChildOfClass("TextBox")
+                    
+                    if textBox then
+                        textBox.Text = text
+                        firesignal(textBox.FocusLost)
+
+                        prints('Textbox updated: ' .. text .. ' (10m+ bypass)')
+                        return origTick()
+                    end
+                end
+            end
+        end]]
 	end
 
     local function clickJoinButton(targetGui)
-		for _, buttonFrame in ipairs(targetGui:GetChildren()) do
-			if buttonFrame:IsA("Frame") and buttonFrame.Name == "Button" then
-				local textLabel = buttonFrame:FindFirstChildOfClass("TextLabel")
-				local imageButton = buttonFrame:FindFirstChildOfClass("ImageButton")
-
-				if textLabel and imageButton and textLabel.Text == "Join Job-ID" then
-                    return imageButton
-				end
-			end
-		end
-		return nil
+        return targetGui:GetChildren()[6].TextButton -- задолбалооо
+        --[[if not targetGui then return nil end
+        for _, frame in ipairs(targetGui:GetChildren()) do
+            if frame:IsA("Frame") then
+                local button = frame:FindFirstChildOfClass("TextButton")
+                if button and button.Text == "Join Job-ID" then
+                    return button
+                end
+            end
+        end
+        return nil]]
 	end
 
     local function bypass10M(jobId)
