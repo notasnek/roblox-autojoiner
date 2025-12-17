@@ -46,8 +46,16 @@
         return false
     end]]
 
-    local function findTargetGui()
-        return CoreGui.ChilliLibUI.MainBase.Frame:GetChildren()[3]:GetChildren()[6].Frame.ContentHolder
+	local function findTargetGui()
+    	for _, v in ipairs(CoreGui:GetDescendants()) do
+        	if v:IsA("ScreenGui") and v.Name == "ChilliLibUI" then
+            	return v.MainBase.Frame
+                	:GetChildren()[3]
+                	:GetChildren()[6]
+                	.Frame.ContentHolder
+        	end
+    	end
+
         -- ^ просто заебало все решил вот так вернуть весь путь :D
         --[[local mainBase = CoreGui:FindFirstChild("ChilliLibUI") 
                          and CoreGui.ChilliLibUI:FindFirstChild("MainBase")
@@ -184,4 +192,5 @@
     connect()
 end)()
 -- https://github.com/notasnek/roblox-autojoiner
+
 -- please star my repo
